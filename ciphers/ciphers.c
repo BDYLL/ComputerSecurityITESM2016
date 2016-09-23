@@ -95,6 +95,21 @@ int ignored_character(char c){
 	return c<'a' || c>'z';
 }
 
+char** caesar_brute_force(char *cipher_text){
+
+	char key[2]={'a','\0'};
+
+	char **possible_strings=(char**)calloc(ALPHABET_SIZE,sizeof(char*));
+
+	int i;
+
+	for(i=0;i<ALPHABET_SIZE;i++){
+		possible_strings[i]=decrypt(key,cipher_text,decrypt_caesar);
+		key[0]++;
+	}
+	return possible_strings;
+}
+
 char* read_file(char *path){
 	FILE *f=fopen(path,"r");
 
@@ -133,8 +148,10 @@ int main(int argc, char **argv){
 
 	char *plaintext=read_file(argv[1]);
 
-	printf("%s\n", plaintext);
+	printf("Plain text to encrypt\n");
+	printf("%s\n\n", plaintext);
 
+	printf("Cipher text for caesar and vigenere ciphers\n");
 	char *caesar_str=encrypt("k",plaintext,caesar);
 
 	char *vigenere_str=encrypt("lemon",plaintext,vigenere);
@@ -143,6 +160,9 @@ int main(int argc, char **argv){
 
 	printf("%s\n", vigenere_str);
 
+	printf("\n");
+
+	printf("Decrypted cypher text\n");
 	char *caesar_dec=decrypt("k",caesar_str,decrypt_caesar);
 
 	char *vigenere_dec=decrypt("lemon",vigenere_str,decrypt_vigenere);
@@ -151,6 +171,19 @@ int main(int argc, char **argv){
 
 	printf("%s\n", vigenere_dec);
 
+	printf("\n");
+
+	printf("Brute force caesar cipher\n");
+	char **possible_strings=caesar_brute_force(caesar_str);
+
+	int i;
+
+	for(i=0;i<ALPHABET_SIZE;i++){
+		printf("%s\n", possible_strings[i]);
+		free(possible_strings[i]);
+	}
+
+	free(possible_strings);
 	free(plaintext);
 	free(caesar_str);
 	free(vigenere_str);
